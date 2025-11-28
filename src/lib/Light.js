@@ -25,11 +25,8 @@ class Light {
         
         shadow = shadow.shadowHasIntersection(shapes, shape);
 
-        if (shadow && shadow.hit.distance > 0)
-        {
-                
+        if (shadow && shadow.hit.distance > 0 && shadow.hit.distance < light_d)
             return (1);
-        }
         return (0);
     }
 
@@ -39,13 +36,15 @@ class Light {
         let n;
         let i;
         let intensity;
-
+        
+        
         v = ft_sum(ray.from, ft_product(ray.direction, ray.hit.distance));
         lm = ft_normalize(ft_sub(this.origin, v));
         n = ray.hit.normal;
         intensity = ft_dot(lm, n);
-        if (intensity < 0 || this.ft_is_shadow(ray, this.shapes, shape))
+        if (intensity < 0 || this.ft_is_shadow(ray, this.shapes, shape)){
             intensity = 0;
+        }
         intensity = (intensity * this.intensity);
         i = {
             x: intensity + this.ambient * (this.color.x / 255.0),

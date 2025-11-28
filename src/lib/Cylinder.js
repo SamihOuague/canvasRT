@@ -1,12 +1,12 @@
 import { ft_cross_product, ft_dot, ft_product, ft_sub, ft_sum, ft_normalize } from "./utils";
 
 class Cylinder {
-    constructor(origin, axis, height, radius) {
+    constructor(origin, axis, height, radius, color = { x: 25, y: 155, z: 255 }) {
         this.radius = radius;
         this.height = height;
         this.axis = ft_normalize(axis);
         this.origin = origin;
-        this.color = { x: 25, y: 155, z: 255 };
+        this.color = color;
     }
 
     ft_caps_normal_intersection(ray, d, c_top) {

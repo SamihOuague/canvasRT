@@ -1,12 +1,14 @@
 import Ray from "./Ray";
+import Camera from "./Camera";
 
 class Scene {
     constructor(objects, light, ctx) {
         this.objects = objects;
         this.light = light;
         this.ctx = ctx;
-        this.width = 250;
-        this.height = 250;
+        this.width = 800;
+        this.height = 500;
+        this.camera = new Camera({x: 0, y: 10, z: -10}, {x: 0, y: -0.5, z: 1}, 60, this.width, this.height);
     }
 
     getPixel(ray)
@@ -38,14 +40,12 @@ class Scene {
 
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillStyle = "#000000";
-        for (let i = 0; i < 250 * 250; i++) {
-            x = i % 250;
-            y = Math.floor(i / 250);
-            ray = new Ray({ x: 0, y: 0, z: 0 }, { x, y, z: 1 });
-            ray.direction = ray.ft_ray_direction(ray.direction);
+        for (let i = 0; i < this.width * this.height; i++) {
+            x = i % this.width;
+            y = Math.floor(i / this.width);
+            ray = this.camera.ft_init_ray(x, y);
             this.ctx.fillStyle = this.getPixel(ray);
-            
-            this.ctx.fillRect(x, 250 - 1 - y, 1, 1);
+            this.ctx.fillRect(x, this.height - 1 - y, 1, 1);
         }
     }
 }

@@ -1,16 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css" />
-        <title>Canvas RT</title>
-    </head>
+<html lang="fr">
 
-    <body>
-        <div style="display: flex; justify-content: center; height: 100vh; align-items: center;">
-            <canvas id="myCanvas" width="250" height="250"></canvas>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas RT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Canvas Ray Tracer</h1>
+            <p>Configuration de la scène 3D</p>
         </div>
-        <script src="bundle.js"></script>
-    </body>
+
+        <!-- Configuration Caméra et Lumières -->
+        <form class="controls-section" id="init">
+            <div class="control-group">
+                <h2>📷 Caméra</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Position X</label>
+                        <input type="number" id="camPosX" value="0" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Position Y</label>
+                        <input type="number" id="camPosY" value="10" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Position Z</label>
+                        <input type="number" id="camPosZ" value="-10" step="0.1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Orientation X (rad)</label>
+                        <input type="number" id="camRotX" value="0" step="0.01">
+                    </div>
+                    <div class="form-field">
+                        <label>Orientation Y (rad)</label>
+                        <input type="number" id="camRotY" value="-0.5" step="0.01">
+                    </div>
+                    <div class="form-field">
+                        <label>Orientation Z (rad)</label>
+                        <input type="number" id="camRotZ" value="1" step="0.01">
+                    </div>
+                    <div class="form-field">
+                        <label>FOV (degrés)</label>
+                        <input type="number" id="camFov" value="60" min="10" max="120">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h2>💡 Lumière Directionnelle</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Position X</label>
+                        <input type="number" id="lightPosX" value="5" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Position Y</label>
+                        <input type="number" id="lightPosY" value="5" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Position Z</label>
+                        <input type="number" id="lightPosZ" value="5" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Intensité</label>
+                        <input type="number" id="lightIntensity" value="0.8" min="0" max="2" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h2>🌟 Lumière Ambiante</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Couleur</label>
+                        <input type="color" id="ambientColor" value="#ffffff">
+                    </div>
+                    <div class="form-field">
+                        <label>Intensité</label>
+                        <input type="number" id="ambientIntensity" value="0.2" min="0" max="1" step="0.05">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" style="width: 100%;">🔄 Mettre à jour la scène</button>
+        </form>
+
+        <!-- Canvas -->
+        <div class="canvas-wrapper">
+            <canvas id="myCanvas" width="800" height="500"></canvas>
+        </div>
+
+        <!-- Gestion des objets -->
+        <form id="object" class="objects-section">
+            <div class="add-object-form">
+                <h2 style="color: #667eea; margin-bottom: 15px;">➕ Ajouter un objet</h2>
+
+                <div class="object-type-selector">
+                    <button class="type-btn active" id="sp">Sphère</button>
+                    <button class="type-btn" id="cy">Cylindre</button>
+                    <button class="type-btn" id="pl">Plan</button>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Position X</label>
+                        <input type="number" id="objPosX" value="0" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Position Y</label>
+                        <input type="number" id="objPosY" value="0" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Position Z</label>
+                        <input type="number" id="objPosZ" value="-5" step="0.1">
+                    </div>
+                    <div class="form-field">
+                        <label>Couleur</label>
+                        <input type="color" id="objColor" value="#ff5733">
+                    </div>
+                </div>
+
+                <!-- Champs spécifiques Sphère -->
+                <div id="spFields" class="dynamic-fields active">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Rayon</label>
+                            <input type="number" name="sphereRadius" value="1" min="0.1" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Champs spécifiques Cylindre -->
+                <div id="cyFields" class="dynamic-fields">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Rayon</label>
+                            <input type="number" name="cylinderRadius" value="1" min="0.1" step="0.1">
+                        </div>
+                        <div class="form-field">
+                            <label>Hauteur</label>
+                            <input type="number" name="cylinderSize" value="5" min="0.1" step="0.1">
+                        </div>
+                        <div class="form-field">
+                            <label>Orientation X</label>
+                            <input type="number" name="cylinderOrientX" value="0" step="0.1">
+                        </div>
+                        <div class="form-field">
+                            <label>Orientation Y</label>
+                            <input type="number" name="cylinderOrientY" value="1" step="0.1">
+                        </div>
+                        <div class="form-field">
+                            <label>Orientation Z</label>
+                            <input type="number" name="cylinderOrientZ" value="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Champs spécifiques Plan -->
+                <div id="plFields" class="dynamic-fields">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Normale X</label>
+                            <input type="number" id="planeNormalX" value="0" step="0.1">
+                        </div>
+                        <div class="form-field">
+                            <label>Normale Y</label>
+                            <input type="number" id="planeNormalY" value="1" step="0.1">
+                        </div>
+                        <div class="form-field">
+                            <label>Normale Z</label>
+                            <input type="number" id="planeNormalZ" value="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary">➕ Ajouter l'objet</button>
+            </div>
+
+            <div class="objects-list">
+                <h2 style="color: #667eea; margin-bottom: 15px;">📦 Objets dans la scène</h2>
+                <div id="objectsList"></div>
+            </div>
+        </form>
+    </div>
+
+    <script src="bundle.js"></script>
+</body>
+
 </html>

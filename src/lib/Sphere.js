@@ -1,14 +1,10 @@
 import { ft_product, ft_normalize, ft_dot, ft_sub } from "./utils";
 
 class Sphere {
-    constructor(origin, radius) {
+    constructor(origin, radius, color = { x: 255, y: 20, z: 25 }) {
         this.radius = radius;
         this.origin = origin;
-        this.color = {
-            x: 255,
-            y: 20,
-            z: 25
-        }
+        this.color = color;
     }
 
     ft_sphere_normal(ray)
@@ -45,7 +41,7 @@ class Sphere {
             return (0);
         if (t[0] > t[1] && t[1] > 0)
             t[0] = t[1];
-        
+
         ray.hit.distance = t[0];
         return (this.ft_sphere_normal(ray));
     }

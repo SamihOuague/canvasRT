@@ -1,10 +1,11 @@
 import { ft_dot, ft_normalize, ft_product, ft_sub } from "./utils";
 
 class Plan {
-    constructor(direction, point) {
+    constructor(direction, point, color = { x: 120, y: 255, z: 55 }) {
         this.direction = direction;
         this.point = point;
-        this.color = { x: 120, y: 255, z: 55 };
+        this.origin = point;
+        this.color = color;
     }
 
     ft_has_intersection(ray) {

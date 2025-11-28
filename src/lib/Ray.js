@@ -40,12 +40,10 @@ class Ray {
         for (let i in shapes)
         {
             let r = new Ray(this.from, this.direction);
-            if (shapes[i] !== shape && shapes[i].ft_has_intersection(r)
+            if (shapes[i] !== shape && shapes[i].ft_has_intersection(r) && r.hit.distance > 0
                     && (ray == null || (r.hit.distance < ray.hit.distance)))
                 ray = r;
         }
-        if (ray != null && ray.hit.distance < 0)
-            return null;
         return ray;
     }
 }
